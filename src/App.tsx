@@ -4,30 +4,34 @@ import './App.css';
 import {createBrowserHistory} from 'history';
 import {PrivateRoute} from "./routes/PrivateRoute";
 import {BrowserRouter, Redirect, Route, Switch} from 'react-router-dom';
-import HomePage from "./components/Home";
+import Home from "./components/Home";
 import Login from "./components/Login";
-import MyHomePage from "./components/MyHome";
+import MyHome from "./components/MyHome";
 import SignUp from "./components/SignUp";
 import {MuiThemeProvider} from "@material-ui/core";
 import {customTheme} from "./components/styles/CustomTheme";
 import MenuAppBar from "./components/MenuAppBar";
-
+import {StateProvider} from './state/StateProvider';
+import {authenticationReducer, initialAuthenticationState} from "./state/Authentication";
 
 export const history = createBrowserHistory();
+
 
 const App: React.FC = () => {
     return (
         <div className="App">
             <BrowserRouter>
                 <MuiThemeProvider theme={customTheme}>
-                    <MenuAppBar history={history}/>
-                    <Switch>
-                        <Route exact path="/" component={HomePage}/>
-                        <PrivateRoute exact path="/dashboard" component={MyHomePage}/>
-                        <Route exact path="/login" component={Login}/>
-                        <Route exact path="/signup" component={SignUp}/>
-                        <Redirect from="*" to="/"/>
-                    </Switch>
+                    <StateProvider initialState={initialAuthenticationState()} reducer={authenticationReducer}>
+                        <MenuAppBar history={history}/>
+                        <Switch>
+                            <Route exact path="/" component={Home}/>
+                            <PrivateRoute exact path="/dashboard" component={MyHome}/>
+                            <Route exact path="/login" component={Login}/>
+                            <Route exact path="/signup" component={SignUp}/>
+                            <Redirect from="*" to="/"/>
+                        </Switch>
+                    </StateProvider>
                 </MuiThemeProvider>
             </BrowserRouter>
         </div>
