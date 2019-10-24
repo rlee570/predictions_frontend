@@ -1,6 +1,6 @@
 import {User} from "../state/User";
-import {UserData} from "../components/SignUp";
 import {AuthenticationResponse, AuthenticationState} from "../state/Authentication";
+import {SignUpData} from "../components/SignUpForm";
 
 export const userService = {
     login,
@@ -18,7 +18,7 @@ function login(email: string, password: string): AuthenticationResponse {
     return {error: "login failed!"};
 }
 
-function createUser(userData: UserData): User {
+function createUser(userData: SignUpData): User {
     return new User(userData.firstName, userData.lastName, userData.email, userData.password);
 }
 

@@ -7,8 +7,6 @@ interface HomeProps {
 }
 
 export default function Home(props: HomeProps) {
-    const {} = props;
-
     return (
         <div>
             <StyledPaper>

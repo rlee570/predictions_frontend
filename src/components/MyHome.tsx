@@ -7,7 +7,6 @@ interface MyHomeProps {
 }
 
 export default function MyHome(props: MyHomeProps) {
-    const {} = props;
     const [authenticationState,] = useContext(StateContext);
 
     return (
