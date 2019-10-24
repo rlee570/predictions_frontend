@@ -10,9 +10,9 @@ import MyHome from "./components/MyHome";
 import SignUp from "./components/SignUp";
 import {MuiThemeProvider} from "@material-ui/core";
 import {customTheme} from "./components/styles/CustomTheme";
-import MenuAppBar from "./components/MenuAppBar";
 import {StateProvider} from './state/StateProvider';
 import {authenticationReducer, initialAuthenticationState} from "./state/Authentication";
+import {MenuAppBar} from "./components/MenuAppBar";
 
 export const history = createBrowserHistory();
 

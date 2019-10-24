@@ -1,20 +1,11 @@
-import {createStyles, Theme} from "@material-ui/core";
+import {styled} from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
 
-const MenuAppBarStyles = (theme: Theme) =>
-    createStyles({
-        root: {
-            flexGrow: 1,
-        },
-        menuButton: {
-            marginRight: theme.spacing(4),
-        },
-        link: {
-            margin: theme.spacing(4),
-        },
-        title: {
-            flexGrow: 1,
-        },
-    });
+export const StyledDiv = styled('div')(({theme}) => ({
+    padding: theme.spacing(1),
+    flexGrow: 1,
+}));
 
-
-export default MenuAppBarStyles;
+export const StyledTypography = styled(Typography)({
+    flexGrow: 1,
+}) as typeof Typography;

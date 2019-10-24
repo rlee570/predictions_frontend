@@ -1,23 +1,13 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import {
-    Avatar,
-    Button,
-    Container,
-    CssBaseline,
-    Grid,
-    SnackbarContent,
-    TextField,
-    withStyles,
-    WithStyles
-} from "@material-ui/core";
+import {Container, CssBaseline, Grid, TextField} from "@material-ui/core";
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {userService} from "../services/UserService";
 import {Formik, FormikActions, FormikProps} from "formik";
 import * as Yup from "yup";
 import Snackbar from '@material-ui/core/Snackbar';
-import CommonStyles from "./styles/CommonStyles";
 import {RouteComponentProps} from 'react-router-dom';
+import {StyledAvatar, StyledButton, StyledDiv, StyledForm, StyledSnackbarContent} from "./styles/FormStyles";
 
 export interface UserData {
     firstName: string;
@@ -26,11 +16,11 @@ export interface UserData {
     password: string;
 }
 
-interface SignUpProps extends WithStyles<typeof CommonStyles>, RouteComponentProps<any> {
+interface SignUpProps extends RouteComponentProps<any> {
 }
 
-function SignUp(props: SignUpProps) {
-    const {classes, history} = props;
+export default function SignUp(props: SignUpProps) {
+    const {history} = props;
     const [openSnackbar, setOpenSnackbar] = React.useState<boolean>(false);
 
     const handleSubmit = (values: UserData, actions: FormikActions<UserData>) => {
@@ -63,10 +53,10 @@ function SignUp(props: SignUpProps) {
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline/>
-            <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
+            <StyledDiv>
+                <StyledAvatar>
                     <LockOutlinedIcon/>
-                </Avatar>
+                </StyledAvatar>
                 <Typography component="h1" variant="h5">
                     Sign Up
                 </Typography>
@@ -75,9 +65,8 @@ function SignUp(props: SignUpProps) {
                     onClose={() => setOpenSnackbar(false)}
                     anchorOrigin={{vertical: 'top', horizontal: 'center',}}
                 >
-                    <SnackbarContent
+                    <StyledSnackbarContent
                         message={<span id="client-snackbar">This email address is already registered.</span>}
-                        className={classes.snackbarContent}
                     />
                 </Snackbar>
                 <Formik
@@ -85,7 +74,7 @@ function SignUp(props: SignUpProps) {
                     onSubmit={handleSubmit}
                     validationSchema={signupValidation()}
                     render={(formikBag: FormikProps<UserData>) => (
-                        <form className={classes.form} onSubmit={formikBag.handleSubmit}>
+                        <StyledForm onSubmit={formikBag.handleSubmit}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
@@ -150,25 +139,22 @@ function SignUp(props: SignUpProps) {
                                     />
                                 </Grid>
                             </Grid>
-                            <Button
+                            <StyledButton
                                 type="submit"
                                 fullWidth
                                 variant="contained"
                                 color="primary"
-                                className={classes.submit}
                                 disabled={formikBag.isSubmitting}
                             >
                                 Sign Up
-                            </Button>
-                        </form>
+                            </StyledButton>
+                        </StyledForm>
                     )}
                 />
-            </div>
+            </StyledDiv>
         </Container>
     );
 }
-
-export default withStyles(CommonStyles)(SignUp);
 
 
 

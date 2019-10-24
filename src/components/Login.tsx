@@ -1,35 +1,26 @@
 import React, {useContext} from 'react';
 import Typography from '@material-ui/core/Typography';
-import {
-    Avatar,
-    Button,
-    Container,
-    CssBaseline,
-    SnackbarContent,
-    TextField,
-    withStyles,
-    WithStyles
-} from "@material-ui/core";
+import {Container, CssBaseline, TextField} from "@material-ui/core";
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {userService} from "../services/UserService";
 import {Redirect, RouteComponentProps} from 'react-router-dom';
 import {Formik, FormikActions, FormikProps} from "formik";
 import * as Yup from "yup";
 import Snackbar from '@material-ui/core/Snackbar';
-import CommonStyles from "./styles/CommonStyles";
 import {StateContext} from "../state/StateProvider";
 import {ActionType} from "../state/Authentication";
+import {StyledAvatar, StyledButton, StyledDiv, StyledForm, StyledSnackbarContent} from "./styles/FormStyles";
 
 interface LoginData {
     email: string;
     password: string;
 }
 
-interface LoginProps extends WithStyles<typeof CommonStyles>, RouteComponentProps<any> {
+interface LoginProps extends RouteComponentProps<any> {
 }
 
-function Login(props: LoginProps) {
-    const {classes, history} = props;
+export default function Login(props: LoginProps) {
+    const {history} = props;
     const [openSnackbar, setOpenSnackbar] = React.useState<boolean>(false);
     const [authenticationState, dispatch] = useContext(StateContext);
 
@@ -80,10 +71,10 @@ function Login(props: LoginProps) {
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline/>
-            <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
+            <StyledDiv>
+                <StyledAvatar>
                     <LockOutlinedIcon/>
-                </Avatar>
+                </StyledAvatar>
                 <Typography component="h1" variant="h5">
                     Log in
                 </Typography>
@@ -92,9 +83,8 @@ function Login(props: LoginProps) {
                     onClose={() => setOpenSnackbar(false)}
                     anchorOrigin={{vertical: 'top', horizontal: 'center',}}
                 >
-                    <SnackbarContent
+                    <StyledSnackbarContent
                         message={<span id="client-snackbar">Please enter the correct login or password.</span>}
-                        className={classes.snackbarContent}
                     />
                 </Snackbar>
                 <Formik
@@ -102,7 +92,7 @@ function Login(props: LoginProps) {
                     onSubmit={handleSubmit}
                     validationSchema={loginValidation}
                     render={(formikBag: FormikProps<LoginData>) => (
-                        <form className={classes.form} onSubmit={formikBag.handleSubmit}>
+                        <StyledForm onSubmit={formikBag.handleSubmit}>
                             <TextField
                                 variant="outlined"
                                 margin="normal"
@@ -132,25 +122,22 @@ function Login(props: LoginProps) {
                                 onChange={formikBag.handleChange}
                                 helperText={(formikBag.errors.password && formikBag.touched.password) && formikBag.errors.password}
                             />
-                            <Button
+                            <StyledButton
                                 type="submit"
                                 fullWidth
                                 variant="contained"
                                 color="primary"
-                                className={classes.submit}
                                 disabled={formikBag.isSubmitting}
                             >
                                 Log In
-                            </Button>
-                        </form>
+                            </StyledButton>
+                        </StyledForm>
                     )}
                 />
-            </div>
+            </StyledDiv>
         </Container>
     );
 }
-
-export default withStyles(CommonStyles)(Login);
 
 
 

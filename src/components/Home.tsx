@@ -1,25 +1,22 @@
 import React from 'react';
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import CommonStyles from "./styles/CommonStyles";
-import {withStyles, WithStyles} from "@material-ui/core";
+import {StyledPaper} from "./styles/HomeStyles";
 
-interface HomeProps extends WithStyles<typeof CommonStyles> {
+
+interface HomeProps {
 }
 
-function Home(props: HomeProps) {
-    const {classes} = props;
+export default function Home(props: HomeProps) {
+    const {} = props;
 
     return (
         <div>
-            <Paper className={classes.paper}>
+            <StyledPaper>
                 <Typography variant="h5" component="h3">
                     This is public content showing all available predictions.
                 </Typography>
-            </Paper>
+            </StyledPaper>
         </div>
     );
 }
-
-export default withStyles(CommonStyles)(Home);
 
