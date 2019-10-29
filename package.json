@@ -19,7 +19,8 @@
     "formik": "latest",
     "yup": "latest",
     "history": "latest",
-    "axios": "^0.19.0"
+    "axios": "^0.19.0",
+    "axios-mock-adapter": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
