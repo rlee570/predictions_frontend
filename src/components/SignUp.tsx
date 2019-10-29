@@ -18,7 +18,7 @@ export default function SignUp(props: SignUpProps) {
     const [openSnackbar, setOpenSnackbar] = React.useState<boolean>(false);
 
     const handleSubmit = (values: SignUpData, actions: FormikActions<SignUpData>) => {
-        //TODO integrate with backend
+        //TODO integrate with backend once available
         const user = userService.createUser(values);
         if (user) {
             history.push('/dashboard/');

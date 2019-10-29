@@ -11,8 +11,9 @@ import SignUp from "./components/SignUp";
 import {MuiThemeProvider} from "@material-ui/core";
 import {customTheme} from "./components/styles/CustomTheme";
 import {StateProvider} from './state/StateProvider';
-import {authenticationReducer, initialAuthenticationState} from "./state/Authentication";
 import {MenuAppBar} from "./components/MenuAppBar";
+import {authenticationReducer} from "./state/user/Reducer";
+import {initialAuthenticationState} from "./state/user/Authentication";
 
 export const history = createBrowserHistory();
 
