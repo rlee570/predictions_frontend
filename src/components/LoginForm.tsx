@@ -18,7 +18,7 @@ export default function LoginForm(props: LoginFormProps) {
     const {formikBagProps} = props;
 
     return (
-        <StyledForm onSubmit={formikBagProps.handleSubmit}>
+        <StyledForm onSubmit={formikBagProps.handleSubmit} id={"login-form"}>
             <TextField
                 variant="outlined"
                 margin="normal"

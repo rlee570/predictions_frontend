@@ -20,7 +20,7 @@ export default function SignUpForm(props: SignUpFormProps) {
     const {formikBagProps} = props;
 
     return (
-        <StyledForm onSubmit={formikBagProps.handleSubmit}>
+        <StyledForm onSubmit={formikBagProps.handleSubmit} id={"signup-form"}>
             <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                     <TextField

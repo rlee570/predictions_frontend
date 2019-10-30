@@ -1,5 +1,4 @@
-import {Avatar, Button, SnackbarContent, styled} from "@material-ui/core";
-import red from "@material-ui/core/colors/red";
+import {Avatar, Button, styled} from "@material-ui/core";
 
 export const StyledDiv = styled('div')(({theme}) => ({
     marginTop: theme.spacing(8),
@@ -12,11 +11,6 @@ export const StyledAvatar = styled(Avatar)(({theme}) => ({
     margin: theme.spacing(3),
     backgroundColor: theme.palette.common.black,
 })) as typeof Avatar;
-
-export const StyledSnackbarContent = styled(SnackbarContent)(({theme}) => ({
-    margin: theme.spacing(7),
-    backgroundColor: red[500],
-})) as typeof SnackbarContent;
 
 export const StyledForm = styled('form')(({theme}) => ({
     width: '100%', // Fix IE 11 issue.

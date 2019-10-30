@@ -5,14 +5,14 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {Redirect, RouteComponentProps} from 'react-router-dom';
 import {Formik, FormikActions, FormikProps} from "formik";
 import * as Yup from "yup";
-import Snackbar from '@material-ui/core/Snackbar';
 import {StateContext} from "../state/StateProvider";
-import {StyledAvatar, StyledDiv, StyledSnackbarContent} from "./styles/FormStyles";
+import {StyledAvatar, StyledDiv} from "./styles/FormStyles";
 import LoginForm, {initialLoginData, LoginData} from "./LoginForm";
 import {userApi} from "../services/Api";
 import {AxiosError, AxiosResponse} from "axios";
 import {ActionType} from "../state/user/Action";
 import {AuthenticationResponse, isAuthenticated} from "../state/user/Authentication";
+import CustomSnackbar from "./CustomSnackbar";
 
 interface LoginProps extends RouteComponentProps<any> {
 }
@@ -20,8 +20,11 @@ interface LoginProps extends RouteComponentProps<any> {
 
 export default function Login(props: LoginProps) {
     const {history} = props;
+
     const [openSnackbar, setOpenSnackbar] = React.useState<boolean>(false);
-    const [errorMsg, setErrorMsg] = React.useState<string>("");
+    const [snackbarMessage, setSnackbarMessage] = React.useState<string>("");
+    const [isError, setIsError] = React.useState<boolean>(false);
+
     const [authenticationState, dispatch] = useContext(StateContext);
 
     const handleSubmit = (values: LoginData, actions: FormikActions<LoginData>) => {
@@ -35,15 +38,22 @@ export default function Login(props: LoginProps) {
             .catch((error: AxiosError) => {
                 dispatch({type: ActionType.LOGIN_FAILURE,});
                 // TODO handle functional and technical errors from backend once available
+                let message: string = '';
                 if (error.isAxiosError) {
-                    setErrorMsg(error.message);
+                    message = error.message;
                 } else {
-                    setErrorMsg("Please enter the correct login or password.");
+                    message = "Please enter the correct login or password.";
                 }
-                setOpenSnackbar(true);
+                showSnackbar(message, true);
             });
         actions.setSubmitting(false);
     };
+
+    const showSnackbar = (message: string, isError: boolean) => {
+        setSnackbarMessage(message);
+        setIsError(isError);
+        setOpenSnackbar(true);
+    }
 
     const loginValidation = () => {
         return (
@@ -65,7 +75,7 @@ export default function Login(props: LoginProps) {
         <Container component="main" maxWidth="xs">
             <CssBaseline/>
             <StyledDiv>
-                {authenticationState.isLoading && <CircularProgress/> }
+                {authenticationState.isLoading && <CircularProgress/>}
                 <StyledAvatar>
                     <LockOutlinedIcon/>
                 </StyledAvatar>
@@ -73,16 +83,9 @@ export default function Login(props: LoginProps) {
                     Log in
                 </Typography>
 
-                <Snackbar
-                    open={openSnackbar}
-                    onClose={() => setOpenSnackbar(false)}
-                    anchorOrigin={{vertical: 'top', horizontal: 'center',}}
-                >
-                    <StyledSnackbarContent
-                        message={<span id="client-snackbar">{errorMsg}</span>}
-                    />
-                </Snackbar>
-
+                <CustomSnackbar snackbarMessage={snackbarMessage} openBar={openSnackbar}
+                                onClose={() => setOpenSnackbar(false)}
+                                variant={isError ? 'error' : 'success'}/>
 
                 <Formik
                     initialValues={initialLoginData}
