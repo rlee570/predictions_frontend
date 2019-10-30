@@ -49,7 +49,7 @@ export default function Login(props: LoginProps) {
         return (
             Yup.object().shape({
                 email: Yup.string()
-                //.email()
+                .email()
                     .required('Required'),
                 password: Yup.string()
                     .required('Required'),
