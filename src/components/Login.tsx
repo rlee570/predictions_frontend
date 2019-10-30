@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import Typography from '@material-ui/core/Typography';
-import {Container, CssBaseline} from "@material-ui/core";
+import {CircularProgress, Container, CssBaseline} from "@material-ui/core";
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {Redirect, RouteComponentProps} from 'react-router-dom';
 import {Formik, FormikActions, FormikProps} from "formik";
@@ -65,12 +65,14 @@ export default function Login(props: LoginProps) {
         <Container component="main" maxWidth="xs">
             <CssBaseline/>
             <StyledDiv>
+                {authenticationState.isLoading && <CircularProgress/> }
                 <StyledAvatar>
                     <LockOutlinedIcon/>
                 </StyledAvatar>
                 <Typography component="h1" variant="h5">
                     Log in
                 </Typography>
+
                 <Snackbar
                     open={openSnackbar}
                     onClose={() => setOpenSnackbar(false)}
@@ -80,6 +82,8 @@ export default function Login(props: LoginProps) {
                         message={<span id="client-snackbar">{errorMsg}</span>}
                     />
                 </Snackbar>
+
+
                 <Formik
                     initialValues={initialLoginData}
                     onSubmit={handleSubmit}

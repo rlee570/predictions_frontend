@@ -11,7 +11,7 @@ export const userApi = {
 }
 
 if (process.env.REACT_APP_API_MOCK === "true") {
-    const mock = new MockAdapter(clientInstance);
+    const mock = new MockAdapter(clientInstance, { delayResponse: 100 });
 
     mock.onPost('/user/login').reply(function (config) {
         const params = JSON.parse(config.data);

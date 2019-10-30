@@ -1,5 +1,4 @@
-
-export class User  {
+export class User {
     public readonly firstName: string;
     public readonly lastName: string;
     public readonly email: string;
@@ -14,22 +13,30 @@ export class User  {
 }
 
 export interface AuthenticationState {
-    user?: User | null;
-    token?: string | null;
+    user: User | null;
+    token: string | null;
     isLoading: boolean;
-    error?: string;
+    error: string | null;
 }
 
 export function initialAuthenticationState(): AuthenticationState {
     const storedToken = localStorage.getItem('token');
-    // TODO if a token is already stored either get the user information from the backend by token or remove the stored token
-    return {token: storedToken, error: "", isLoading: false};
+    // TODO if a token is already stored we should get the user information by token once available from backend
+    return {user: null, token: storedToken, error: "", isLoading: false};
+}
+
+export function storeToken(token: string) {
+    localStorage.setItem('token', JSON.stringify(token));
+}
+
+export function removeToken() {
+    localStorage.removeItem('token');
 }
 
 export interface AuthenticationResponse {
-    user?: User;
-    token?: string;
-    error?: string;
+    user: User | null;
+    token: string | null;
+    error: string | null;
 }
 
 export function isAuthenticated(authenticationState: AuthenticationState): boolean {
