@@ -1,7 +1,7 @@
 import {FormikProps} from "formik";
 import {Grid, TextField} from "@material-ui/core";
-import {StyledButton, StyledForm} from "./styles/FormStyles";
 import React from "react";
+import {StyledButton, StyledForm} from "./styles/MuiStyles";
 
 export interface SignUpData {
     firstName: string;
@@ -9,8 +9,6 @@ export interface SignUpData {
     email: string;
     password: string;
 }
-
-export const initialSignUpData: SignUpData = {firstName: "", lastName: "", email: "", password: ""};
 
 interface SignUpFormProps {
     formikBagProps: FormikProps<SignUpData>;

@@ -6,54 +6,46 @@ import {Redirect, RouteComponentProps} from 'react-router-dom';
 import {Formik, FormikActions, FormikProps} from "formik";
 import * as Yup from "yup";
 import {StateContext} from "../state/StateProvider";
-import {StyledAvatar, StyledDiv} from "./styles/FormStyles";
-import LoginForm, {initialLoginData, LoginData} from "./LoginForm";
+import LoginForm, {LoginData} from "./LoginForm";
 import {userApi} from "../services/Api";
 import {AxiosError, AxiosResponse} from "axios";
-import {ActionType} from "../state/user/Action";
+import {AuthenticationActionType} from "../state/user/Action";
 import {AuthenticationResponse, isAuthenticated} from "../state/user/Authentication";
 import CustomSnackbar from "./CustomSnackbar";
+import {StyledAvatar, StyledDiv} from "./styles/MuiStyles";
 
 interface LoginProps extends RouteComponentProps<any> {
 }
 
-
 export default function Login(props: LoginProps) {
     const {history} = props;
 
-    const [openSnackbar, setOpenSnackbar] = React.useState<boolean>(false);
-    const [snackbarMessage, setSnackbarMessage] = React.useState<string>("");
-    const [isError, setIsError] = React.useState<boolean>(false);
-
     const [authenticationState, dispatch] = useContext(StateContext);
+    const [openSnackbar, setOpenSnackbar] = React.useState<boolean>(false);
+
+    const initLoginData = () => {
+        let initialEmail = '';
+        if (authenticationState.user && authenticationState.user.email) {
+            initialEmail = authenticationState.user.email;
+        }
+        const initialLoginData: LoginData = {email: initialEmail, password: '' };
+        return initialLoginData;
+    };
 
     const handleSubmit = (values: LoginData, actions: FormikActions<LoginData>) => {
 
-        dispatch({type: ActionType.LOGIN_REQUEST});
+        dispatch({type: AuthenticationActionType.LOGIN_REQUEST});
         userApi.login(values.email, values.password)
             .then((response: AxiosResponse<AuthenticationResponse>) => {
-                dispatch({type: ActionType.LOGIN_SUCCESS, response: response.data});
+                dispatch({type: AuthenticationActionType.LOGIN_SUCCESS, response: response.data});
                 history.push('/dashboard/');
             })
             .catch((error: AxiosError) => {
-                dispatch({type: ActionType.LOGIN_FAILURE,});
-                // TODO handle functional and technical errors from backend once available
-                let message: string = '';
-                if (error.isAxiosError) {
-                    message = error.message;
-                } else {
-                    message = "Please enter the correct login or password.";
-                }
-                showSnackbar(message, true);
+                dispatch({type: AuthenticationActionType.LOGIN_FAILURE, errorResponse: error});
+                setOpenSnackbar(true);
             });
         actions.setSubmitting(false);
     };
-
-    const showSnackbar = (message: string, isError: boolean) => {
-        setSnackbarMessage(message);
-        setIsError(isError);
-        setOpenSnackbar(true);
-    }
 
     const loginValidation = () => {
         return (
@@ -83,12 +75,12 @@ export default function Login(props: LoginProps) {
                     Log in
                 </Typography>
 
-                <CustomSnackbar snackbarMessage={snackbarMessage} openBar={openSnackbar}
+                <CustomSnackbar snackbarMessage={authenticationState.error} openBar={openSnackbar}
                                 onClose={() => setOpenSnackbar(false)}
-                                variant={isError ? 'error' : 'success'}/>
+                                variant={authenticationState.error ? 'error' : 'success'}/>
 
                 <Formik
-                    initialValues={initialLoginData}
+                    initialValues={initLoginData()}
                     onSubmit={handleSubmit}
                     validationSchema={loginValidation}
                     render={(formikBag: FormikProps<LoginData>) => (

@@ -1,6 +1,6 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import {StyledPaper} from "./styles/HomeStyles";
+import {StyledPaper} from "./styles/MuiStyles";
 
 
 interface HomeProps {

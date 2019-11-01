@@ -1,14 +1,12 @@
 import {FormikProps} from "formik";
 import {TextField} from "@material-ui/core";
-import {StyledButton, StyledForm} from "./styles/FormStyles";
 import React from "react";
+import {StyledButton, StyledForm} from "./styles/MuiStyles";
 
 export interface LoginData {
     email: string;
     password: string;
 }
-
-export const initialLoginData: LoginData = {email: "", password: ""};
 
 interface LoginFormProps {
     formikBagProps: FormikProps<LoginData>;

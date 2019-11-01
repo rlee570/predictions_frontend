@@ -32,7 +32,7 @@ export default function CustomSnackbar(props: Props) {
     const {snackbarMessage, onClose, openBar, variant} = props;
 
     return (
-        <>
+        <div>
             <Snackbar
                 open={openBar}
                 onClose={onClose}
@@ -43,6 +43,6 @@ export default function CustomSnackbar(props: Props) {
                     className={clsx(classes[variant])}
                 />
             </Snackbar>
-        </>
+        </div>
     );
 }

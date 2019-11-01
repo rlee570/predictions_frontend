@@ -13,16 +13,16 @@ export class User {
 }
 
 export interface AuthenticationState {
-    user: User | null;
-    token: string | null;
+    user?: User;
+    token?: string;
     isLoading: boolean;
-    error: string | null;
+    error?: string;
 }
 
 export function initialAuthenticationState(): AuthenticationState {
-    const storedToken = localStorage.getItem('token');
     // TODO if a token is already stored we should get the user information by token once available from backend
-    return {user: null, token: storedToken, error: "", isLoading: false};
+    //const storedToken = localStorage.getItem('token');
+    return {error: "", isLoading: false};
 }
 
 export function storeToken(token: string) {
@@ -34,9 +34,15 @@ export function removeToken() {
 }
 
 export interface AuthenticationResponse {
-    user: User | null;
-    token: string | null;
-    error: string | null;
+    user?: User;
+    token?: string;
+    error?: string;
+}
+
+export interface UserResponse {
+    user?: User;
+    status?: string;
+    reason?: string;
 }
 
 export function isAuthenticated(authenticationState: AuthenticationState): boolean {

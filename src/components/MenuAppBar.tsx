@@ -7,9 +7,10 @@ import {History} from "history";
 import {Link} from 'react-router-dom'
 import {StateContext} from "../state/StateProvider";
 import Button from '@material-ui/core/Button';
-import {StyledDiv, StyledTypography} from "./styles/MenuAppBarStyles";
-import {ActionType} from "../state/user/Action";
+import {StyledDiv} from "./styles/MenuAppBarStyles";
+import {AuthenticationActionType} from "../state/user/Action";
 import {isAuthenticated} from "../state/user/Authentication";
+import {StyledTypography} from "./styles/MuiStyles";
 
 interface MenuAppBarProps {
     history: History;
@@ -20,8 +21,8 @@ export function MenuAppBar(props: MenuAppBarProps) {
     const [authenticationState, dispatch] = useContext(StateContext);
 
     const handleLogout = () => {
-        dispatch({type: ActionType.LOGOUT_REQUEST});
-        dispatch({type: ActionType.LOGOUT_SUCCESS});
+        dispatch({type: AuthenticationActionType.LOGOUT_REQUEST});
+        dispatch({type: AuthenticationActionType.LOGOUT_SUCCESS});
         history.push("/");
     };
 
@@ -32,9 +33,19 @@ export function MenuAppBar(props: MenuAppBarProps) {
                     <IconButton edge="start" color="inherit" aria-label="menu">
                         <MenuIcon/>
                     </IconButton>
+
+                    {isAuthenticated(authenticationState) &&
+                    <StyledTypography variant="h6">
+                        Prediction Platform of {authenticationState.user && authenticationState.user.email}
+                    </StyledTypography>
+                    }
+
+                    {!isAuthenticated(authenticationState) &&
                     <StyledTypography variant="h6">
                         Prediction Platform
                     </StyledTypography>
+                    }
+
 
                     {!isAuthenticated(authenticationState) &&
                     <Button component={Link} to="/signup" color="inherit">Sign up</Button>
