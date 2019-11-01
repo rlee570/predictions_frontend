@@ -1,4 +1,6 @@
 import {Avatar, Button, styled} from "@material-ui/core";
+import Paper from "@material-ui/core/Paper";
+import Typography from "@material-ui/core/Typography";
 
 export const StyledDiv = styled('div')(({theme}) => ({
     marginTop: theme.spacing(8),
@@ -20,3 +22,14 @@ export const StyledForm = styled('form')(({theme}) => ({
 export const StyledButton = styled(Button)(({theme}) => ({
     margin: theme.spacing(3, 0, 2),
 })) as typeof Button;
+
+export const StyledPaper = styled(Paper)(({theme}) => ({
+    marginTop: theme.spacing(8),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+})) as typeof Paper;
+
+export const StyledTypography = styled(Typography)({
+    flexGrow: 1,
+}) as typeof Typography;
