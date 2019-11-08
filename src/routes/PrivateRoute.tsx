@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {Redirect, Route} from 'react-router-dom';
 import {StateContext} from "../state/StateProvider";
-import {isAuthenticated} from "../state/user/Authentication";
+import {isAuthenticated} from "../state/user/User";
 
 interface Props {
     exact?: boolean;
@@ -10,11 +10,11 @@ interface Props {
 }
 
 export function PrivateRoute({component: Component, ...rest}: Props) {
-    const [authenticationState,] = useContext(StateContext);
+    const [userState,] = useContext(StateContext);
 
     return (
         <Route {...rest} render={props => (
-            isAuthenticated(authenticationState)
+            isAuthenticated(userState)
                 ? <Component {...props} />
                 : <Redirect to={{pathname: '/login', state: {from: props.location}}}/>
         )}/>

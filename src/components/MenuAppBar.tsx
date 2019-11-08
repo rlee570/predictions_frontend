@@ -2,15 +2,20 @@ import React, {useContext} from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import HomeIcon from '@material-ui/icons/Home';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import {History} from "history";
 import {Link} from 'react-router-dom'
 import {StateContext} from "../state/StateProvider";
-import Button from '@material-ui/core/Button';
 import {StyledDiv} from "./styles/MenuAppBarStyles";
-import {AuthenticationActionType} from "../state/user/Action";
-import {isAuthenticated} from "../state/user/Authentication";
+import {UserActionType} from "../state/user/Action";
+import {isAuthenticated, removeToken} from "../state/user/User";
 import {StyledTypography} from "./styles/MuiStyles";
+import {Tooltip} from "@material-ui/core";
+import LockIcon from '@material-ui/icons/Lock';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+
 
 interface MenuAppBarProps {
     history: History;
@@ -18,46 +23,75 @@ interface MenuAppBarProps {
 
 export function MenuAppBar(props: MenuAppBarProps) {
     const {history} = props;
-    const [authenticationState, dispatch] = useContext(StateContext);
+    const [userState, dispatch] = useContext(StateContext);
 
     const handleLogout = () => {
-        dispatch({type: AuthenticationActionType.LOGOUT_REQUEST});
-        dispatch({type: AuthenticationActionType.LOGOUT_SUCCESS});
-        history.push("/");
+        dispatch({type: UserActionType.LOGOUT_REQUEST});
+        const logoutPromise = new Promise((resolve) => {
+            removeToken();
+            resolve();
+        });
+        logoutPromise.then(() => {
+            dispatch({type: UserActionType.LOGOUT_SUCCESS});
+            history.push("/");
+        });
     };
 
     return (
         <StyledDiv>
             <AppBar position="static">
                 <Toolbar>
-                    <IconButton edge="start" color="inherit" aria-label="menu">
-                        <MenuIcon/>
-                    </IconButton>
+                    <Tooltip title="Home" aria-label="menu-home-tooltip">
+                        <IconButton edge="start" color="inherit" aria-label="menu-home" component={Link} to="/">
+                            <HomeIcon/>
+                        </IconButton>
+                    </Tooltip>
 
-                    {isAuthenticated(authenticationState) &&
-                    <StyledTypography variant="h6">
-                        Prediction Platform of {authenticationState.user && authenticationState.user.email}
-                    </StyledTypography>
+                    {isAuthenticated(userState) &&
+                    <Tooltip title="Dashboard" aria-label="menu-dashboard-tooltip">
+                        <IconButton edge="start" color="inherit" aria-label="menu-dashboard" component={Link}
+                                    to="/dashboard">
+                            <DashboardIcon/>
+                        </IconButton>
+                    </Tooltip>
                     }
 
-                    {!isAuthenticated(authenticationState) &&
-                    <StyledTypography variant="h6">
+                    <StyledTypography variant="h6" align={"left"}>
                         Prediction Platform
                     </StyledTypography>
+
+                    {!isAuthenticated(userState) &&
+                    <Tooltip title="Sign up" aria-label="menu-signup-tooltip">
+                        <IconButton edge="end" color="inherit" aria-label="menu-signup" component={Link}
+                                    to="/signup">
+                            <AccountBoxIcon/>
+                        </IconButton>
+                    </Tooltip>
                     }
 
-
-                    {!isAuthenticated(authenticationState) &&
-                    <Button component={Link} to="/signup" color="inherit">Sign up</Button>
+                    {!isAuthenticated(userState) &&
+                    <Tooltip title="Log in" aria-label="menu-login-tooltip">
+                        <IconButton edge="end" color="inherit" aria-label="menu-login" component={Link}
+                                    to="/login">
+                            <LockIcon/>
+                        </IconButton>
+                    </Tooltip>
                     }
 
-                    {!isAuthenticated(authenticationState) &&
-                    <Button component={Link} to="/login" color="inherit">Log in</Button>
+                    {isAuthenticated(userState) &&
+                    <StyledTypography variant="button" align="right">
+                        {userState.user && userState.user.firstName} {userState.user && userState.user.lastName}
+                    </StyledTypography>
                     }
 
-                    {isAuthenticated(authenticationState) &&
-                    <Button color="inherit" onClick={handleLogout}>Log out</Button>
+                    {isAuthenticated(userState) &&
+                    < Tooltip title="Log out" aria-label="menu-logout-tooltip">
+                        <IconButton edge="end" color="inherit" aria-label="menu-logout" onClick={handleLogout}>
+                            <ExitToAppIcon/>
+                        </IconButton>
+                    </Tooltip>
                     }
+
                 </Toolbar>
             </AppBar>
         </StyledDiv>

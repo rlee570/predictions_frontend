@@ -21,7 +21,7 @@ const barVariant = {
 };
 
 export interface Props {
-    snackbarMessage: string;
+    snackbarMessage?: string;
     onClose: () => void;
     openBar: boolean;
     variant: keyof typeof barVariant;

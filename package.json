@@ -9,6 +9,7 @@
     "@types/react-dom": "16.9.2",
     "@types/react-router-dom": "^5.1.0",
     "@types/yup": "latest",
+    "@types/recharts": "latest",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-scripts": "3.2.0",
@@ -20,7 +21,9 @@
     "yup": "latest",
     "history": "latest",
     "axios": "^0.19.0",
-    "axios-mock-adapter": "latest"
+    "axios-mock-adapter": "latest",
+    "recharts": "latest",
+    "moment": "^2.24.0"
   },
   "scripts": {
     "start": "react-scripts start",

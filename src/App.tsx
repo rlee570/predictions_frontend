@@ -6,14 +6,14 @@ import {PrivateRoute} from "./routes/PrivateRoute";
 import {BrowserRouter, Redirect, Route, Switch} from 'react-router-dom';
 import Home from "./components/Home";
 import Login from "./components/Login";
-import MyHome from "./components/MyHome";
+import Dashboard from "./components/Dashboard";
 import SignUp from "./components/SignUp";
 import {MuiThemeProvider} from "@material-ui/core";
 import {customTheme} from "./components/styles/CustomTheme";
 import {StateProvider} from './state/StateProvider';
 import {MenuAppBar} from "./components/MenuAppBar";
-import {authenticationReducer} from "./state/user/Reducer";
-import {initialAuthenticationState} from "./state/user/Authentication";
+import {userReducer} from "./state/user/Reducer";
+import {initialUserState} from "./state/user/User";
 
 export const history = createBrowserHistory();
 
@@ -23,11 +23,11 @@ const App: React.FC = () => {
         <div className="App">
             <BrowserRouter>
                 <MuiThemeProvider theme={customTheme}>
-                    <StateProvider initialState={initialAuthenticationState()} reducer={authenticationReducer}>
+                    <StateProvider initialState={initialUserState()} reducer={userReducer}>
                         <MenuAppBar history={history}/>
                         <Switch>
                             <Route exact path="/" component={Home}/>
-                            <PrivateRoute exact path="/dashboard" component={MyHome}/>
+                            <PrivateRoute exact path="/dashboard" component={Dashboard}/>
                             <Route exact path="/login" component={Login}/>
                             <Route exact path="/signup" component={SignUp}/>
                             <Redirect from="*" to="/"/>

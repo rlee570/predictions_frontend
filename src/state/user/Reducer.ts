@@ -1,18 +1,18 @@
-import {AuthenticationAction, AuthenticationActionType} from "./Action";
+import {UserAction, UserActionType} from "./Action";
 import produce from "immer";
 import util from "util";
-import {AuthenticationState, removeToken, storeToken} from "./Authentication";
+import {storeToken, UserState} from "./User";
 
 // TODO handle storage of tokens once backend available
-export function authenticationReducer(state: AuthenticationState, action: AuthenticationAction): AuthenticationState {
+export function userReducer(state: UserState, action: UserAction): UserState {
     switch (action.type) {
-        case AuthenticationActionType.LOGIN_REQUEST:
-        case AuthenticationActionType.LOGOUT_REQUEST:
-        case AuthenticationActionType.CREATE_USER_REQUEST:
+        case UserActionType.LOGIN_REQUEST:
+        case UserActionType.LOGOUT_REQUEST:
+        case UserActionType.CREATE_USER_REQUEST:
             return produce(state, draftState => {
                 draftState.isLoading = true;
             });
-        case AuthenticationActionType.LOGIN_SUCCESS:
+        case UserActionType.LOGIN_SUCCESS:
             storeToken("token");
             const newState = produce(state, draftState => {
                 draftState.user = action.response.user;
@@ -22,15 +22,15 @@ export function authenticationReducer(state: AuthenticationState, action: Authen
 
             console.log("newState after login success: " + util.inspect(newState, false, null, true));
             return newState;
-        case AuthenticationActionType.CREATE_USER_SUCCESS:
+        case UserActionType.CREATE_USER_SUCCESS:
             return produce(state, draftState => {
                 draftState.user = action.response.user;
                 draftState.isLoading = false;
             });
-        case AuthenticationActionType.LOGIN_FAILURE:
-        case AuthenticationActionType.LOGOUT_FAILURE:
-        case AuthenticationActionType.CREATE_USER_FAILURE:
-            // TODO read error message from backend once available
+        case UserActionType.LOGIN_FAILURE:
+        case UserActionType.LOGOUT_FAILURE:
+        case UserActionType.CREATE_USER_FAILURE:
+            // TODO error handling: read error message from backend once available
             let message: string = '';
             if (action.errorResponse.isAxiosError) {
                 message = action.errorResponse.message;
@@ -46,8 +46,7 @@ export function authenticationReducer(state: AuthenticationState, action: Authen
                 draftState.isLoading = false;
                 draftState.error = message;
             });
-        case AuthenticationActionType.LOGOUT_SUCCESS:
-            removeToken();
+        case UserActionType.LOGOUT_SUCCESS:
             return produce(state, draftState => {
                 draftState.isLoading = false;
                 draftState.token = undefined;

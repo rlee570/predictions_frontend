@@ -1,7 +1,7 @@
-import {AuthenticationResponse, UserResponse} from "./Authentication";
 import {AxiosError} from "axios";
+import {UserResponse} from "../../service/Response";
 
-export enum AuthenticationActionType {
+export enum UserActionType {
     LOGIN_REQUEST,
     LOGIN_SUCCESS,
     LOGIN_FAILURE,
@@ -13,13 +13,13 @@ export enum AuthenticationActionType {
     CREATE_USER_FAILURE
 }
 
-export type AuthenticationAction =
-    | { type: AuthenticationActionType.LOGIN_REQUEST }
-    | { type: AuthenticationActionType.LOGIN_SUCCESS, response: AuthenticationResponse }
-    | { type: AuthenticationActionType.LOGIN_FAILURE, errorResponse: AxiosError<AuthenticationResponse> }
-    | { type: AuthenticationActionType.LOGOUT_REQUEST }
-    | { type: AuthenticationActionType.LOGOUT_SUCCESS }
-    | { type: AuthenticationActionType.LOGOUT_FAILURE, errorResponse: AxiosError<AuthenticationResponse> }
-    | { type: AuthenticationActionType.CREATE_USER_REQUEST }
-    | { type: AuthenticationActionType.CREATE_USER_SUCCESS, response: UserResponse }
-    | { type: AuthenticationActionType.CREATE_USER_FAILURE, errorResponse: AxiosError<UserResponse> }
+export type UserAction =
+    | { type: UserActionType.LOGIN_REQUEST }
+    | { type: UserActionType.LOGIN_SUCCESS, response: UserResponse }
+    | { type: UserActionType.LOGIN_FAILURE, errorResponse: AxiosError<UserResponse> }
+    | { type: UserActionType.LOGOUT_REQUEST }
+    | { type: UserActionType.LOGOUT_SUCCESS }
+    | { type: UserActionType.LOGOUT_FAILURE, errorResponse: AxiosError<UserResponse> }
+    | { type: UserActionType.CREATE_USER_REQUEST }
+    | { type: UserActionType.CREATE_USER_SUCCESS, response: UserResponse }
+    | { type: UserActionType.CREATE_USER_FAILURE, errorResponse: AxiosError<UserResponse> }
