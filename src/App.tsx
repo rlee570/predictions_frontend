@@ -14,16 +14,18 @@ import {StateProvider} from './state/StateProvider';
 import {MenuAppBar} from "./components/MenuAppBar";
 import {userReducer} from "./state/user/Reducer";
 import {initialUserState} from "./state/user/User";
+import SetupUser from "./components/SetupUser";
 
 export const history = createBrowserHistory();
 
-
 const App: React.FC = () => {
+
     return (
         <div className="App">
             <BrowserRouter>
                 <MuiThemeProvider theme={customTheme}>
                     <StateProvider initialState={initialUserState()} reducer={userReducer}>
+                        <SetupUser />
                         <MenuAppBar history={history}/>
                         <Switch>
                             <Route exact path="/" component={Home}/>

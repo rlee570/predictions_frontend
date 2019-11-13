@@ -20,7 +20,7 @@ export function voteReducer(state: VoteState, action: VoteAction): VoteState {
             console.log("create vote failure");
             return produce(state, draftState => {
                 draftState.isLoading = false;
-                draftState.error = "create vote failure";
+                draftState.reason = "create vote failure";
             });
         default:
             return state;

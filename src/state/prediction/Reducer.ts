@@ -17,7 +17,9 @@ export function predictionsReducer(state: PredictionsState, action: PredictionAc
         case PredictionActionType.GET_ALL_PREDICTIONS_FAILURE:
             // TODO error handling
             console.log("get all predictions failure");
-            return state;
+            return produce(state, draftState => {
+                draftState.isLoading = false;
+            });
         default:
             return state;
     }
@@ -37,7 +39,9 @@ export function statisticsReducer(state: StatisticsState, action: StatisticsActi
         case StatisticsActionType.GET_STATISTICS_FAILURE:
             // TODO error handling
             console.log("get statistics failure");
-            return state;
+            return produce(state, draftState => {
+                draftState.isLoading = false;
+            });
         default:
             return state;
     }

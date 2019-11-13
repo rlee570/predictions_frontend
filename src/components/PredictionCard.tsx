@@ -18,7 +18,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import {StateContext} from "../state/StateProvider";
-import {isAuthenticated} from "../state/user/User";
+import {ADMIN_ROLE, isAuthenticated} from "../state/user/User";
 import VoteDialog from "./VoteDialog";
 import OutcomeSelect from "./OutcomeSelect";
 import {statisticsApi, voteApi} from "../service/Api";
@@ -27,13 +27,11 @@ import {StatisticsResponse, VoteResponse} from "../service/Response";
 import {initialVoteState} from "../state/vote/Vote";
 import {voteReducer} from "../state/vote/Reducer";
 import {VoteActionType} from "../state/vote/Action";
-import CustomSnackbar from "./CustomSnackbar";
 import {statisticsReducer} from "../state/prediction/Reducer";
 import {initialStatisticsState} from "../state/prediction/Statistics";
 import {StatisticsActionType} from "../state/prediction/Action";
 import CustomPieChart from "./CustomPieChart";
-import {getOutcomeLabel, isExpired, Prediction} from "../state/prediction/Prediction";
-import util from "util";
+import {getOutcomeLabel, isExpired, notEnoughPoints, Prediction} from "../state/prediction/Prediction";
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -61,17 +59,19 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 interface PredictionCardProps {
     prediction: Prediction;
+    updatePrediction: (predictionId: number, outcome: boolean) => void;
 }
 
 export default function PredictionCard(props: PredictionCardProps) {
     const classes = useStyles();
-    const {prediction} = props;
+    const {prediction, updatePrediction} = props;
 
     const [expanded, setExpanded] = React.useState(false);
     const [openVoteDialog, setOpenVoteDialog] = React.useState(false);
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
+
     const [userVote, setUserVote] = React.useState(false);
-    const [outcome, setOutcome] = React.useState<string | number>(0);
+    const [outcome, setOutcome] = React.useState<string | number>('');
 
     const [userState,] = useContext(StateContext);
     const [voteState, voteDispatch] = useReducer(voteReducer, initialVoteState());
@@ -107,8 +107,19 @@ export default function PredictionCard(props: PredictionCardProps) {
     };
 
     const handleChangeOutcome = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setOutcome(event.target.value as number);
+        const val = event.target.value as number;
+        setOutcome(val);
+        console.log("value: ", val);
         console.log("outcome: ", outcome);
+        var boolOutcome: undefined | boolean = undefined;
+        if (outcome === 1) {
+            boolOutcome = true;
+            updatePrediction(prediction.id, boolOutcome);
+        }
+        if (outcome === 2) {
+            boolOutcome = false;
+            updatePrediction(prediction.id, boolOutcome);
+        }
     };
 
     useEffect(() => {
@@ -133,9 +144,7 @@ export default function PredictionCard(props: PredictionCardProps) {
     ];
 
     const getSubHeaderText = () => {
-        const ed: string = 'Expiry Date: ' + prediction.expiry.toString() + ' ' + getOutcomeLabel(prediction);
-        console.log("newState after login success: " + util.inspect(prediction, false, null, true));
-        return ed;
+        return 'Expiry Date: ' + prediction.expiry.toString() + ' ' + getOutcomeLabel(prediction);
     }
 
     return (
@@ -154,13 +163,13 @@ export default function PredictionCard(props: PredictionCardProps) {
                 </CardActionArea>
                 <CardActions>
                     <Tooltip title="Vote yes">
-                        <IconButton color="primary" disabled={!isAuthenticated(userState) || isExpired(prediction)}
+                        <IconButton color="primary" disabled={!isAuthenticated(userState) || isExpired(prediction) || notEnoughPoints(userState.user)}
                                     onClick={() => handleClickOpenVoteDialog(true)}>
                             <ThumbUpIcon/>
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="Vote no">
-                        <IconButton color="secondary" disabled={!isAuthenticated(userState) || isExpired(prediction)}
+                        <IconButton color="secondary" disabled={!isAuthenticated(userState) || isExpired(prediction) || notEnoughPoints(userState.user)}
                                     onClick={() => handleClickOpenVoteDialog(false)}>
                             <ThumbDownIcon/>
                         </IconButton>
@@ -175,18 +184,22 @@ export default function PredictionCard(props: PredictionCardProps) {
                         <ExpandMoreIcon/>
                     </IconButton>
                 </CardActions>
+
+                {userState.user && userState.user.role === ADMIN_ROLE &&
+
                 <CardActions>
-                    <OutcomeSelect handleChangeOutcome={handleChangeOutcome} outcomeValue={outcome}/>
+                    <OutcomeSelect handleChangeOutcome={handleChangeOutcome} outcomeValue={outcome} isDisabled={prediction.outcome} />
                 </CardActions>
+
+                }
 
                 <VoteDialog openDialog={openVoteDialog} handleCancel={handleCancelVoteDialog} handleVote={handleVote}
                             maxNoAvailablePoints={userState.user && userState.user.points}
                             userVote={userVote}/>
 
-                <CustomSnackbar snackbarMessage={voteState.error} openBar={openSnackbar}
-                                onClose={() => setOpenSnackbar(false)}
-                                variant={voteState.error ? 'error' : 'success'}/>
-
+                {/*<CustomSnackbar snackbarMessage={voteState.reason} openBar={openSnackbar}*/}
+                {/*                onClose={() => setOpenSnackbar(false)}*/}
+                {/*                variant={(voteState.status === 'error') ? 'error' : 'success'}/>*/}
 
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                     <CardContent>

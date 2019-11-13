@@ -1,12 +1,12 @@
 import axios from "axios";
 import MockAdapter from 'axios-mock-adapter';
-import {Role, User} from "../state/user/User";
+import {ADMIN_ROLE, User, USER_ROLE} from "../state/user/User";
 import {Vote} from "../state/vote/Vote";
 import {Statistics} from "../state/prediction/Statistics";
 import {Prediction} from "../state/prediction/Prediction";
 
 const loginEndpoint: string = '/user/login';
-const createUserEndpoint: string = '/user';
+const userEndpoint: string = '/user';
 const getAllPredictionsEndpoint: string = '/predictions';
 const createVoteEndpoint: string = '/vote';
 const getStatisticsEndpoint: string = '/statistics';
@@ -18,16 +18,18 @@ const clientInstance = axios.create({
 
 export const userApi = {
     login: (email: string, password: string) => clientInstance.post(loginEndpoint, {email, password}),
-    createUser: (firstName: string, lastName: string, email: string, password: string) => clientInstance.post(createUserEndpoint, {
+    createUser: (firstName: string, lastName: string, email: string, password: string) => clientInstance.post(userEndpoint, {
         email: email,
-        password: password,
         first_name: firstName,
-        last_name: lastName
+        last_name: lastName,
+        password: password
     }),
+    getUserById: (id: number, token: string) => clientInstance.get(`${userEndpoint}/${id}`,
+        {headers: {"Authorization" : `Token ${token}`}}),
 }
 
 export const predictionApi = {
-    getAllPredictions: () => clientInstance.get(getAllPredictionsEndpoint)
+    getAllPredictions: () => clientInstance.get(getAllPredictionsEndpoint),
 }
 
 export const voteApi = {
@@ -37,7 +39,6 @@ export const voteApi = {
         points: points,
         outcome: outcome
     }),
-
 }
 
 export const statisticsApi = {
@@ -50,7 +51,7 @@ if (process.env.REACT_APP_API_MOCK === 'true' && process.env.NODE_ENV !== 'produ
 
     mock.onPost(loginEndpoint).reply(function (config) {
         const params = JSON.parse(config.data);
-        const mockUser = new User(0, 'test', 'test', params.email, params.password, Role.USER, User.DEFAULT_NO_POINTS);
+        const mockUser = new User(0, 'test', 'test', params.email, ADMIN_ROLE, User.DEFAULT_NO_POINTS);
         // return array: [status, data, headers]
         return [200, {
             user: mockUser,
@@ -58,16 +59,16 @@ if (process.env.REACT_APP_API_MOCK === 'true' && process.env.NODE_ENV !== 'produ
         }];
     });
 
-    mock.onPost(createUserEndpoint).reply(function (config) {
+    mock.onPost(userEndpoint).reply(function (config) {
         const params = JSON.parse(config.data);
-        const mockUser = new User(0, params.first_name, params.last_name, params.email, params.password, Role.USER, User.DEFAULT_NO_POINTS);
+        const mockUser = new User(0, params.first_name, params.last_name, params.email, USER_ROLE, User.DEFAULT_NO_POINTS);
         return [200, {
             user: mockUser,
         }];
     });
 
     mock.onGet(getAllPredictionsEndpoint).reply(function (config) {
-        const mockOwner = new User(0, 'test', 'test', 'test@gmail.com', '', Role.USER, User.DEFAULT_NO_POINTS);
+        const mockOwner = new User(0, 'test', 'test', 'test@gmail.com', USER_ROLE, User.DEFAULT_NO_POINTS);
 
         const allPredictions: Prediction[] = [];
 

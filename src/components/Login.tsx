@@ -13,7 +13,7 @@ import {UserActionType} from "../state/user/Action";
 import {isAuthenticated} from "../state/user/User";
 import CustomSnackbar from "./CustomSnackbar";
 import {StyledAvatar, StyledDiv} from "./styles/MuiStyles";
-import {UserResponse} from "../service/Response";
+import {AuthenticationResponse} from "../service/Response";
 
 interface LoginProps extends RouteComponentProps<any> {
 }
@@ -29,18 +29,19 @@ export default function Login(props: LoginProps) {
         if (userState.user && userState.user.email) {
             initialEmail = userState.user.email;
         }
-        const initialLoginData: LoginData = {email: initialEmail, password: '' };
+        const initialLoginData: LoginData = {email: initialEmail, password: ''};
         return initialLoginData;
     };
 
     const handleSubmit = (values: LoginData, actions: FormikActions<LoginData>) => {
         dispatch({type: UserActionType.LOGIN_REQUEST});
         userApi.login(values.email, values.password)
-            .then((response: AxiosResponse<UserResponse>) => {
+            .then((response: AxiosResponse<AuthenticationResponse>) => {
                 dispatch({type: UserActionType.LOGIN_SUCCESS, response: response.data});
                 history.push('/dashboard/');
             })
             .catch((error: AxiosError) => {
+                console.log('Error during login: ', error);
                 dispatch({type: UserActionType.LOGIN_FAILURE, errorResponse: error});
                 setOpenSnackbar(true);
             });
@@ -51,7 +52,7 @@ export default function Login(props: LoginProps) {
         return (
             Yup.object().shape({
                 email: Yup.string()
-                .email()
+                    .email()
                     .required('Required'),
                 password: Yup.string()
                     .required('Required'),
@@ -75,9 +76,9 @@ export default function Login(props: LoginProps) {
                     Log in
                 </Typography>
 
-                <CustomSnackbar snackbarMessage={userState.error} openBar={openSnackbar}
+                <CustomSnackbar snackbarMessage={userState.reason} openBar={openSnackbar}
                                 onClose={() => setOpenSnackbar(false)}
-                                variant={userState.error ? 'error' : 'success'}/>
+                                variant={(userState.status === 'error') ? 'error' : 'success'}/>
 
                 <Formik
                     initialValues={initLoginData()}

@@ -1,31 +1,29 @@
 import React from 'react';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import {InputLabel} from "@material-ui/core";
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        formControl: {
-            margin: theme.spacing(1),
-            minWidth: 120,
-            align: 'top',
-        },
-    }),
-);
+// const useStyles = makeStyles((theme: Theme) =>
+//     createStyles({
+//         formControl: {
+//             margin: theme.spacing(1),
+//             minWidth: 120,
+//             align: 'top',
+//         },
+//     }),
+// );
 
 interface OutcomeSelectProps {
     handleChangeOutcome: (event: React.ChangeEvent<{ value: unknown }>) => void;
     outcomeValue: string | number;
+    isDisabled?: boolean;
 }
 
 export default function OutcomeSelect(props: OutcomeSelectProps) {
-    const classes = useStyles();
+    //const classes = useStyles();
     const {handleChangeOutcome, outcomeValue} = props;
-
     const [open, setOpen] = React.useState(false);
-
 
     const handleClose = () => {
         setOpen(false);
@@ -37,7 +35,7 @@ export default function OutcomeSelect(props: OutcomeSelectProps) {
 
     return (
         <div>
-            <FormControl className={classes.formControl}>
+            {/*<FormControl className={classes.formControl} disabled={isDisabled}>*/}
                 <InputLabel id="outcome-select-label">Outcome</InputLabel>
                 <Select
                     id="outcome-select"
@@ -53,7 +51,7 @@ export default function OutcomeSelect(props: OutcomeSelectProps) {
                     <MenuItem value={1}>Yes</MenuItem>
                     <MenuItem value={2}>No</MenuItem>
                 </Select>
-            </FormControl>
+            {/*</FormControl>*/}
         </div>
     );
 }

@@ -26,7 +26,6 @@ export default function CustomPieChart(props: CustomPieChartProps) {
                             ))
                         }
                     </Pie>
-                    {/*<Legend verticalAlign="bottom" height={20} />*/}
                 </PieChart>
             </ResponsiveContainer>
         </div>

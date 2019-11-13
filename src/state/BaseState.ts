@@ -1,4 +1,9 @@
 export interface BaseState {
     isLoading: boolean;
-    error?: string;
+    status?: string;
+    reason?: string;
+}
+
+export enum Status {
+    ERROR = 'error',
 }

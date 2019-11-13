@@ -10,7 +10,7 @@ import {Link} from 'react-router-dom'
 import {StateContext} from "../state/StateProvider";
 import {StyledDiv} from "./styles/MenuAppBarStyles";
 import {UserActionType} from "../state/user/Action";
-import {isAuthenticated, removeToken} from "../state/user/User";
+import {isAuthenticated, removeUserData} from "../state/user/User";
 import {StyledTypography} from "./styles/MuiStyles";
 import {Tooltip} from "@material-ui/core";
 import LockIcon from '@material-ui/icons/Lock';
@@ -28,7 +28,7 @@ export function MenuAppBar(props: MenuAppBarProps) {
     const handleLogout = () => {
         dispatch({type: UserActionType.LOGOUT_REQUEST});
         const logoutPromise = new Promise((resolve) => {
-            removeToken();
+            removeUserData();
             resolve();
         });
         logoutPromise.then(() => {

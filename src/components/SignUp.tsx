@@ -12,7 +12,7 @@ import {AxiosError, AxiosResponse} from "axios";
 import {StateContext} from "../state/StateProvider";
 import CustomSnackbar from "./CustomSnackbar";
 import {StyledAvatar, StyledDiv} from "./styles/MuiStyles";
-import {UserResponse} from "../service/Response";
+import {CreateUserResponse} from "../service/Response";
 
 interface SignUpProps extends RouteComponentProps<any> {
 }
@@ -28,7 +28,7 @@ export default function SignUp(props: SignUpProps) {
     const handleSubmit = (values: SignUpData, actions: FormikActions<SignUpData>) => {
         dispatch({type: UserActionType.CREATE_USER_REQUEST});
         userApi.createUser(values.firstName, values.lastName, values.email, values.password)
-            .then((response: AxiosResponse<UserResponse>) => {
+            .then((response: AxiosResponse<CreateUserResponse>) => {
                 dispatch({type: UserActionType.CREATE_USER_SUCCESS, response: response.data});
                 history.push('/login/');
             })
@@ -40,7 +40,7 @@ export default function SignUp(props: SignUpProps) {
     };
 
     const signupValidation = () => {
-        const minNoChars: number = 8;
+        const minNoChars: number = 1;
         return (
             Yup.object().shape({
                 firstName: Yup.string()
@@ -70,9 +70,9 @@ export default function SignUp(props: SignUpProps) {
                     Sign up
                 </Typography>
 
-                <CustomSnackbar snackbarMessage={userState.error} openBar={openSnackbar}
+                <CustomSnackbar snackbarMessage={userState.reason} openBar={openSnackbar}
                                 onClose={() => setOpenSnackbar(false)}
-                                variant={userState.error ? 'error' : 'success'}/>
+                                variant={(userState.status === 'error') ? 'error' : 'success'}/>
 
                 <Formik
                     initialValues={initialSignUpData}

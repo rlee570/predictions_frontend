@@ -1,4 +1,4 @@
-import React, {useEffect, useReducer} from 'react';
+import React, {useContext, useEffect, useReducer} from 'react';
 import {CircularProgress, Grid, makeStyles, Theme} from "@material-ui/core";
 import {predictionApi} from "../service/Api";
 import {AxiosError, AxiosResponse} from "axios";
@@ -7,6 +7,7 @@ import {predictionsReducer} from "../state/prediction/Reducer";
 import {PredictionActionType} from "../state/prediction/Action";
 import PredictionCard from "./PredictionCard";
 import {PredictionsResponse} from "../service/Response";
+import {StateContext} from "../state/StateProvider";
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -91,6 +92,7 @@ export default function Home(props: HomeProps) {
     const classes = useStyles();
 
     const [predictionsState, dispatch] = useReducer(predictionsReducer, initialPredictionsState());
+    const [userState,] = useContext(StateContext);
 
     useEffect(() => {
         dispatch({type: PredictionActionType.GET_ALL_PREDICTIONS_REQUEST});
@@ -104,6 +106,10 @@ export default function Home(props: HomeProps) {
             });
     }, []);
 
+    const updatePrediction = (predictionId: number, outcome: boolean) => {
+        // TODO call update prediction endpoint
+    };
+
     return (
         <div>
             <Grid container justify="center">
@@ -113,7 +119,7 @@ export default function Home(props: HomeProps) {
 
                     {predictionsState.predictions && predictionsState.predictions.map(prediction => (
                         <Grid item xs={12} md={4} id={prediction.id.toString()}>
-                            <PredictionCard prediction={prediction}/>
+                            <PredictionCard prediction={prediction} updatePrediction={updatePrediction}/>
                         </Grid>
                     ))}
                 </Grid>

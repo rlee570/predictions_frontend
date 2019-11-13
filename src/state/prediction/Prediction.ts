@@ -7,7 +7,7 @@ export class Prediction {
     public readonly owner: User;
     public readonly statement: string;
     public readonly expiry: Date;
-    public readonly outcome?: boolean;
+    public outcome?: boolean;
 
     //public readonly votes?: Vote[];
 
@@ -25,6 +25,10 @@ export function isExpired(prediction: Prediction): boolean {
     } else {
         return false;
     }
+}
+
+export function notEnoughPoints(user: User): boolean {
+    return (user.points <= 0);
 }
 
 export function getOutcomeLabel(prediction: Prediction): string {

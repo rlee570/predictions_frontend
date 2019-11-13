@@ -5,25 +5,20 @@ export class User {
     public readonly firstName: string;
     public readonly lastName: string;
     public readonly email: string;
-    public readonly password: string;
-    public readonly role: Role;
+    public readonly role: string;
     public readonly points: number;
     public static readonly DEFAULT_NO_POINTS = 100;
 
-    constructor(id: number, firstName: string, lastName: string, email: string, password: string, role: Role, points: number) {
+    constructor(id: number, firstName: string, lastName: string, email: string, role: string, points: number) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.password = password;
         this.role = role;
         this.points = points;
     }
-}
 
-export enum Role {
-    USER = 'user',
-    ADMIN = 'admin',
+
 }
 
 export interface UserState extends BaseState {
@@ -31,18 +26,39 @@ export interface UserState extends BaseState {
     token?: string;
 }
 
+export const idParam: string = 'id';
+export const tokenParam: string = 'token';
+export const ADMIN_ROLE: string = 'admin';
+export const USER_ROLE: string = 'user';
+
 export function initialUserState(): UserState {
-    // TODO if a token is already stored we should get the user using the token information once available from backend
-    const storedToken = localStorage.getItem('token');
-    return {isLoading: false, token: storedToken ? storedToken: undefined};
+    const storedToken = localStorage.getItem(tokenParam);
+    const storedId = localStorage.getItem(idParam);
+
+    const initialUserState: UserState = {
+        isLoading: false,
+        token: undefined,
+    }
+
+    if (storedToken === null || storedId === null) {
+        return initialUserState;
+    }
+
+    const token = storedToken.replace(/"/g, "");
+    initialUserState.user = new User(Number(storedId), '', '', '', USER_ROLE, 0);
+    initialUserState.token = token;
+
+    return initialUserState;
 }
 
-export function storeToken(token: string) {
-    localStorage.setItem('token', JSON.stringify(token));
+export function storeUserData(token: string, id: number) {
+    localStorage.setItem(tokenParam, JSON.stringify(token));
+    localStorage.setItem(idParam, JSON.stringify(id));
 }
 
-export function removeToken() {
-    localStorage.removeItem('token');
+export function removeUserData() {
+    localStorage.removeItem(tokenParam);
+    localStorage.removeItem(idParam);
 }
 
 export function isAuthenticated(userState: UserState): boolean {
