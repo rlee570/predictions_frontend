@@ -18,11 +18,11 @@ interface VoteDialogProps {
 export default function VoteDialog(props: VoteDialogProps) {
     const {openDialog, handleCancel, maxNoAvailablePoints, handleVote} = props;
 
-    const [selectedPoints, setSelectedPoints] = React.useState<number | number[]>(0);
+    const [selectedPoints, setSelectedPoints] = React.useState<number | number[]>(1);
 
     const marks = [
         {
-            value: 0,
+            value: 1,
             label: '1',
         },
         {

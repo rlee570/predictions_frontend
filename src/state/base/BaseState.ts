@@ -4,6 +4,7 @@ export interface BaseState {
     reason?: string;
 }
 
-export enum Status {
-    ERROR = 'error',
-}
+export const ERROR_STATUS: string = 'error';
+
+
+

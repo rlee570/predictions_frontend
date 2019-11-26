@@ -1,4 +1,4 @@
-import {BaseState} from "../BaseState";
+import {BaseState} from "../base/BaseState";
 
 export class Statistics {
     public readonly totalVotes: number;

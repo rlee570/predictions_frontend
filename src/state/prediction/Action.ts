@@ -8,10 +8,19 @@ export enum PredictionActionType {
     GET_ALL_PREDICTIONS_FAILURE
 }
 
+export enum PredictionOutcomeActionType {
+    PUT_PREDICTION_OUTCOME_REQUEST,
+    PUT_PREDICTION_OUTCOME_SUCCESS,
+    PUT_PREDICTION_OUTCOME_FAILURE
+}
+
 export type PredictionAction =
     | { type: PredictionActionType.GET_ALL_PREDICTIONS_REQUEST }
-    | { type: PredictionActionType.GET_ALL_PREDICTIONS_SUCCESS, response: PredictionsResponse }
+    | { type: PredictionActionType.GET_ALL_PREDICTIONS_SUCCESS, response: PredictionsResponse}
     | { type: PredictionActionType.GET_ALL_PREDICTIONS_FAILURE, errorResponse: AxiosError<PredictionsResponse> }
+    | { type: PredictionOutcomeActionType.PUT_PREDICTION_OUTCOME_REQUEST }
+    | { type: PredictionOutcomeActionType.PUT_PREDICTION_OUTCOME_SUCCESS, response: PredictionsResponse }
+    | { type: PredictionOutcomeActionType.PUT_PREDICTION_OUTCOME_FAILURE, errorResponse: AxiosError<PredictionsResponse> }
 
 export enum StatisticsActionType {
     GET_STATISTICS_REQUEST,

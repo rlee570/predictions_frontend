@@ -1,14 +1,15 @@
-import {Vote} from "../state/vote/Vote";
-import {Statistics} from "../state/prediction/Statistics";
-import {Prediction} from "../state/prediction/Prediction";
-
 interface BaseResponse {
     status?: string;
     reason?: string;
 }
 
 export interface PredictionsResponse extends BaseResponse {
-    predictions?: Prediction[];
+    data?: [{
+        id: number;
+        outcome: boolean;
+        owner: number;
+        statement: string;
+    }];
 }
 
 export interface UserResponse extends BaseResponse {
@@ -41,10 +42,16 @@ export interface AuthenticationResponse extends BaseResponse {
 }
 
 export interface VoteResponse extends BaseResponse {
-    vote?: Vote;
+    id: number;
+    prediction: number;
+    user_id: number;
+    points: number;
+    outcome: boolean;
 }
 
 export interface StatisticsResponse extends BaseResponse {
-    statistics?: Statistics;
+    total_votes: number;
+    no_votes: number;
+    yes_votes: number;
 }
 

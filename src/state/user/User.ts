@@ -1,4 +1,4 @@
-import {BaseState} from "../BaseState";
+import {BaseState} from "../base/BaseState";
 
 export class User {
     public readonly id: number;
@@ -26,14 +26,14 @@ export interface UserState extends BaseState {
     token?: string;
 }
 
-export const idParam: string = 'id';
-export const tokenParam: string = 'token';
-export const ADMIN_ROLE: string = 'admin';
+export const ID_PARAM: string = 'id';
+export const TOKEN_PARAM: string = 'token';
+export const ADMIN_ROLE: string = 'ADMIN';
 export const USER_ROLE: string = 'user';
 
 export function initialUserState(): UserState {
-    const storedToken = localStorage.getItem(tokenParam);
-    const storedId = localStorage.getItem(idParam);
+    const storedToken = localStorage.getItem(TOKEN_PARAM);
+    const storedId = localStorage.getItem(ID_PARAM);
 
     const initialUserState: UserState = {
         isLoading: false,
@@ -52,13 +52,13 @@ export function initialUserState(): UserState {
 }
 
 export function storeUserData(token: string, id: number) {
-    localStorage.setItem(tokenParam, JSON.stringify(token));
-    localStorage.setItem(idParam, JSON.stringify(id));
+    localStorage.setItem(TOKEN_PARAM, JSON.stringify(token));
+    localStorage.setItem(ID_PARAM, JSON.stringify(id));
 }
 
 export function removeUserData() {
-    localStorage.removeItem(tokenParam);
-    localStorage.removeItem(idParam);
+    localStorage.removeItem(TOKEN_PARAM);
+    localStorage.removeItem(ID_PARAM);
 }
 
 export function isAuthenticated(userState: UserState): boolean {

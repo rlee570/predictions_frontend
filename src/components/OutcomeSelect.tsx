@@ -1,5 +1,4 @@
 import React from 'react';
-import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import {InputLabel} from "@material-ui/core";
@@ -16,7 +15,7 @@ import {InputLabel} from "@material-ui/core";
 
 interface OutcomeSelectProps {
     handleChangeOutcome: (event: React.ChangeEvent<{ value: unknown }>) => void;
-    outcomeValue: string | number;
+    outcomeValue: number;
     isDisabled?: boolean;
 }
 

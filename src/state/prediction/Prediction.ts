@@ -1,17 +1,17 @@
 import {User} from "../user/User";
-import {BaseState} from "../BaseState";
+import {BaseState} from "../base/BaseState";
 import moment from "moment";
 
 export class Prediction {
     public readonly id: number;
-    public readonly owner: User;
+    public readonly owner: number;
     public readonly statement: string;
     public readonly expiry: Date;
     public outcome?: boolean;
 
     //public readonly votes?: Vote[];
 
-    constructor(id: number, owner: User, statement: string, expiry: Date) {
+    constructor(id: number, owner: number, statement: string, expiry: Date) {
         this.id = id;
         this.owner = owner;
         this.statement = statement;

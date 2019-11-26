@@ -1,7 +1,8 @@
 import {produce} from "immer";
-import {VoteState} from "./Vote";
+import {Vote, VoteState} from "./Vote";
 import {VoteAction, VoteActionType} from "./Action";
 import util from "util";
+import {baseReducer} from "../base/Reducer";
 
 export function voteReducer(state: VoteState, action: VoteAction): VoteState {
     switch (action.type) {
@@ -10,18 +11,16 @@ export function voteReducer(state: VoteState, action: VoteAction): VoteState {
                 draftState.isLoading = true;
             });
         case VoteActionType.CREATE_VOTE_SUCCESS:
-            console.log("create vote success: " + util.inspect(action.response.vote, false, null, true));
-            return produce(state, draftState => {
-                draftState.vote = action.response.vote;
+            console.log("create vote success: " + util.inspect(action.response, false, null, true));
+            const vote = new Vote(action.response.id, action.response.prediction, action.response.user_id, action.response.points, action.response.outcome);
+            const newState = produce(state, draftState => {
+                draftState.vote = vote;
                 draftState.isLoading = false;
             });
+            console.log("new state: " + util.inspect(newState, false, null, true));
+            return newState;
         case VoteActionType.CREATE_VOTE_FAILURE:
-            // TODO error handling
-            console.log("create vote failure");
-            return produce(state, draftState => {
-                draftState.isLoading = false;
-                draftState.reason = "create vote failure";
-            });
+            return baseReducer(state, action);
         default:
             return state;
     }

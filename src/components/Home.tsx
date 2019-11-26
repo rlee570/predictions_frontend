@@ -1,13 +1,12 @@
-import React, {useContext, useEffect, useReducer} from 'react';
+import React, {useEffect, useReducer} from 'react';
 import {CircularProgress, Grid, makeStyles, Theme} from "@material-ui/core";
 import {predictionApi} from "../service/Api";
 import {AxiosError, AxiosResponse} from "axios";
 import {initialPredictionsState} from "../state/prediction/Prediction";
-import {predictionsReducer} from "../state/prediction/Reducer";
+import {predictionReducer} from "../state/prediction/Reducer";
 import {PredictionActionType} from "../state/prediction/Action";
 import PredictionCard from "./PredictionCard";
 import {PredictionsResponse} from "../service/Response";
-import {StateContext} from "../state/StateProvider";
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -91,8 +90,7 @@ interface HomeProps {
 export default function Home(props: HomeProps) {
     const classes = useStyles();
 
-    const [predictionsState, dispatch] = useReducer(predictionsReducer, initialPredictionsState());
-    const [userState,] = useContext(StateContext);
+    const [predictionsState, dispatch] = useReducer(predictionReducer, initialPredictionsState());
 
     useEffect(() => {
         dispatch({type: PredictionActionType.GET_ALL_PREDICTIONS_REQUEST});
@@ -108,6 +106,7 @@ export default function Home(props: HomeProps) {
 
     const updatePrediction = (predictionId: number, outcome: boolean) => {
         // TODO call update prediction endpoint
+        console.log("TODO: put prediction id with outcome: ", predictionId, outcome);
     };
 
     return (

@@ -2,6 +2,7 @@ import {UserAction, UserActionType} from "./Action";
 import produce from "immer";
 import util from "util";
 import {storeUserData, User, USER_ROLE, UserState} from "./User";
+import {baseReducer} from "../base/Reducer";
 
 export function userReducer(state: UserState, action: UserAction): UserState {
     switch (action.type) {
@@ -54,28 +55,7 @@ export function userReducer(state: UserState, action: UserAction): UserState {
         case UserActionType.LOGOUT_FAILURE:
         case UserActionType.CREATE_USER_FAILURE:
         case UserActionType.GET_USER_FAILURE:
-            // TODO error handling: read error message from backend once available
-            console.log("failure: " + util.inspect(action, false, null, true));
-            let message: string = '';
-            let status: string = 'error';
-
-            if (action.errorResponse.isAxiosError) {
-                message = action.errorResponse.message;
-            }
-            if (action.errorResponse.response && action.errorResponse.response.data.reason) {
-                message = action.errorResponse.response.data.reason;
-            }
-            if (action.errorResponse.response && action.errorResponse.response.data.status) {
-                status = action.errorResponse.response.data.status;
-            }
-
-            console.log("message = ", message);
-
-            return produce(state, draftState => {
-                draftState.isLoading = false;
-                draftState.reason = message;
-                draftState.status = status;
-            });
+            return baseReducer(state, action);
         default:
             return state;
     }

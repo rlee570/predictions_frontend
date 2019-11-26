@@ -8,6 +8,7 @@ import {Prediction} from "../state/prediction/Prediction";
 const loginEndpoint: string = '/user/login';
 const userEndpoint: string = '/user';
 const getAllPredictionsEndpoint: string = '/predictions';
+const putPredictionOutcomeEndpoint: string = '/prediction/outcome';
 const createVoteEndpoint: string = '/vote';
 const getStatisticsEndpoint: string = '/statistics';
 
@@ -26,25 +27,29 @@ export const userApi = {
     }),
     getUserById: (id: number, token: string) => clientInstance.get(`${userEndpoint}/${id}`,
         {headers: {"Authorization" : `Token ${token}`}}),
-}
+};
 
 export const predictionApi = {
     getAllPredictions: () => clientInstance.get(getAllPredictionsEndpoint),
-}
+    putPredictionOutcome: (id: number, outcome: boolean, token: string) => clientInstance.put(`${putPredictionOutcomeEndpoint}/${id}`,
+        {outcome: outcome},
+        {headers: {"Authorization" : `Token ${token}`}})
+};
 
 export const voteApi = {
-    createVote: (predictionId: number, user_id: number, points: number, outcome: boolean) => clientInstance.post(createVoteEndpoint, {
+    createVote: (predictionId: number, user_id: number, points: number, outcome: boolean, token: string) => clientInstance.post(createVoteEndpoint, {
         prediction: predictionId,
         user_id: user_id,
         points: points,
         outcome: outcome
-    }),
-}
+    }, {headers: {"Authorization" : `Token ${token}`}}),
+};
 
 export const statisticsApi = {
-    getStatistics: (predictionId: number) => clientInstance.get(getStatisticsEndpoint,
-        {params: {predictionId}}),
-}
+    getStatistics: (predictionId: number) => clientInstance.get(`${getStatisticsEndpoint}/${predictionId}`),
+};
+
+// TODO correct mock to match the real responses
 
 if (process.env.REACT_APP_API_MOCK === 'true' && process.env.NODE_ENV !== 'production') {
     const mock = new MockAdapter(clientInstance, {delayResponse: 500});
@@ -74,7 +79,7 @@ if (process.env.REACT_APP_API_MOCK === 'true' && process.env.NODE_ENV !== 'produ
 
         for (let i: number = 2018; i <= 2022; i++) {
             const date = new Date(i, 11, 2, 5, 10, 10, 0);
-            const aPrediction = new Prediction(i, mockOwner, 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur?', date);
+            const aPrediction = new Prediction(i, 0, 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur?', date);
             allPredictions.push(aPrediction);
         }
 

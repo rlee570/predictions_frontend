@@ -1,25 +1,31 @@
-import {PredictionsState} from "./Prediction";
+import {Prediction, PredictionsState} from "./Prediction";
 import {PredictionAction, PredictionActionType, StatisticsAction, StatisticsActionType} from "./Action";
 import {produce} from "immer";
-import {StatisticsState} from "./Statistics";
+import {Statistics, StatisticsState} from "./Statistics";
+import util from "util";
+import {baseReducer} from "../base/Reducer";
 
-export function predictionsReducer(state: PredictionsState, action: PredictionAction): PredictionsState {
+export function predictionReducer(state: PredictionsState, action: PredictionAction): PredictionsState {
     switch (action.type) {
         case PredictionActionType.GET_ALL_PREDICTIONS_REQUEST:
             return produce(state, draftState => {
                 draftState.isLoading = true;
             });
         case PredictionActionType.GET_ALL_PREDICTIONS_SUCCESS:
+            // the response data is an unnamed JSON array
+            const arr = action.response as Array<any>;
+            const predictions = new Array<Prediction>();
+            arr.map(x => {
+                const prediction = new Prediction(x.id, x.owner, x.statement, x.expiry);
+                predictions.push(prediction);
+            } );
+
             return produce(state, draftState => {
-                draftState.predictions = action.response.predictions;
+                draftState.predictions = predictions;
                 draftState.isLoading = false;
             });
         case PredictionActionType.GET_ALL_PREDICTIONS_FAILURE:
-            // TODO error handling
-            console.log("get all predictions failure");
-            return produce(state, draftState => {
-                draftState.isLoading = false;
-            });
+            return baseReducer(state, action);
         default:
             return state;
     }
@@ -32,16 +38,15 @@ export function statisticsReducer(state: StatisticsState, action: StatisticsActi
                 draftState.isLoading = true;
             });
         case StatisticsActionType.GET_STATISTICS_SUCCESS:
-            return produce(state, draftState => {
-                draftState.statistics = action.response.statistics;
+            const statistics = new Statistics(action.response.total_votes, action.response.yes_votes, action.response.no_votes);
+            const newState = produce(state, draftState => {
+                draftState.statistics = statistics;
                 draftState.isLoading = false;
             });
+            console.log("new state stats success: " + util.inspect(newState, false, null, true));
+            return newState;
         case StatisticsActionType.GET_STATISTICS_FAILURE:
-            // TODO error handling
-            console.log("get statistics failure");
-            return produce(state, draftState => {
-                draftState.isLoading = false;
-            });
+            return baseReducer(state, action);
         default:
             return state;
     }

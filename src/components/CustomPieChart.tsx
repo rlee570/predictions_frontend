@@ -4,7 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import {Cell, Pie, PieChart, ResponsiveContainer} from "recharts";
 
 interface CustomPieChartProps {
-    chartData: ReadonlyArray<object>;
+    chartData: Array<object>;
 }
 
 export default function CustomPieChart(props: CustomPieChartProps) {

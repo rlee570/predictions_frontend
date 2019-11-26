@@ -21,9 +21,9 @@ import {StateContext} from "../state/StateProvider";
 import {ADMIN_ROLE, isAuthenticated} from "../state/user/User";
 import VoteDialog from "./VoteDialog";
 import OutcomeSelect from "./OutcomeSelect";
-import {statisticsApi, voteApi} from "../service/Api";
+import {statisticsApi, userApi, voteApi} from "../service/Api";
 import {AxiosError, AxiosResponse} from "axios";
-import {StatisticsResponse, VoteResponse} from "../service/Response";
+import {StatisticsResponse, UserResponse, VoteResponse} from "../service/Response";
 import {initialVoteState} from "../state/vote/Vote";
 import {voteReducer} from "../state/vote/Reducer";
 import {VoteActionType} from "../state/vote/Action";
@@ -32,6 +32,8 @@ import {initialStatisticsState} from "../state/prediction/Statistics";
 import {StatisticsActionType} from "../state/prediction/Action";
 import CustomPieChart from "./CustomPieChart";
 import {getOutcomeLabel, isExpired, notEnoughPoints, Prediction} from "../state/prediction/Prediction";
+import {ERROR_STATUS} from "../state/base/BaseState";
+import {UserActionType} from "../state/user/Action";
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -62,18 +64,20 @@ interface PredictionCardProps {
     updatePrediction: (predictionId: number, outcome: boolean) => void;
 }
 
+const PIE_YES_NAME: string = "Yes votes";
+const PIE_NO_NAME: string = "No votes";
+
 export default function PredictionCard(props: PredictionCardProps) {
     const classes = useStyles();
     const {prediction, updatePrediction} = props;
 
     const [expanded, setExpanded] = React.useState(false);
     const [openVoteDialog, setOpenVoteDialog] = React.useState(false);
-    const [openSnackbar, setOpenSnackbar] = React.useState(false);
 
     const [userVote, setUserVote] = React.useState(false);
-    const [outcome, setOutcome] = React.useState<string | number>('');
+    const [outcome, setOutcome] = React.useState<number>(0);
 
-    const [userState,] = useContext(StateContext);
+    const [userState, userDispatch] = useContext(StateContext);
     const [voteState, voteDispatch] = useReducer(voteReducer, initialVoteState());
     const [statisticsState, statisticsDispatch] = useReducer(statisticsReducer, initialStatisticsState());
 
@@ -91,18 +95,25 @@ export default function PredictionCard(props: PredictionCardProps) {
     };
 
     const handleVote = (votedPoints: number | number[]) => {
-        console.log("Voted points: ", votedPoints);
-
         voteDispatch({type: VoteActionType.CREATE_VOTE_REQUEST});
-        voteApi.createVote(prediction.id, userState.user.id, votedPoints as number, userVote)
+        voteApi.createVote(prediction.id, userState.user.id, votedPoints as number, userVote, userState.token)
             .then((response: AxiosResponse<VoteResponse>) => {
                 voteDispatch({type: VoteActionType.CREATE_VOTE_SUCCESS, response: response.data});
+                // TODO custom hooks to async fetch user and statistics
+                userDispatch({type: UserActionType.GET_USER_REQUEST});
+                return userApi.getUserById(userState.user.id, userState.token)
+            })
+            .then((response: AxiosResponse<UserResponse>) => {
+                userDispatch({type: UserActionType.GET_USER_SUCCESS, response: response.data});
+                statisticsDispatch({type: StatisticsActionType.GET_STATISTICS_REQUEST});
+                return statisticsApi.getStatistics(prediction.id)
+            })
+            .then((response: AxiosResponse<StatisticsResponse>) => {
+                statisticsDispatch({type: StatisticsActionType.GET_STATISTICS_SUCCESS, response: response.data});
                 setOpenVoteDialog(false);
-                // TODO on success we also need to update the no available points for the user!
             })
             .catch((error: AxiosError) => {
                 voteDispatch({type: VoteActionType.CREATE_VOTE_FAILURE, errorResponse: error});
-                setOpenSnackbar(true);
             });
     };
 
@@ -110,15 +121,11 @@ export default function PredictionCard(props: PredictionCardProps) {
         const val = event.target.value as number;
         setOutcome(val);
         console.log("value: ", val);
-        console.log("outcome: ", outcome);
-        var boolOutcome: undefined | boolean = undefined;
-        if (outcome === 1) {
-            boolOutcome = true;
-            updatePrediction(prediction.id, boolOutcome);
+        if (val === 1) {
+            updatePrediction(prediction.id, true);
         }
-        if (outcome === 2) {
-            boolOutcome = false;
-            updatePrediction(prediction.id, boolOutcome);
+        if (val === 2) {
+            updatePrediction(prediction.id, false);
         }
     };
 
@@ -129,17 +136,17 @@ export default function PredictionCard(props: PredictionCardProps) {
                 statisticsDispatch({type: StatisticsActionType.GET_STATISTICS_SUCCESS, response: response.data});
             })
             .catch((error: AxiosError) => {
-                console.log('Error fetching statistics: ', error);
                 statisticsDispatch({type: StatisticsActionType.GET_STATISTICS_FAILURE, errorResponse: error});
             });
     }, []);
 
+
     const chartData = [
         {
-            name: 'Yes votes', numberOfVotes: statisticsState.statistics ? statisticsState.statistics.yesVotes : 0,
+            name: PIE_YES_NAME, numberOfVotes: statisticsState.statistics ? statisticsState.statistics.yesVotes : 0,
         },
         {
-            name: 'No votes', numberOfVotes: statisticsState.statistics ? statisticsState.statistics.noVotes : 0,
+            name: PIE_NO_NAME, numberOfVotes: statisticsState.statistics ? statisticsState.statistics.noVotes : 0,
         },
     ];
 
@@ -151,10 +158,24 @@ export default function PredictionCard(props: PredictionCardProps) {
         <div>
             <Card className={classes.card}>
 
-                {(voteState.isLoading || statisticsState.isLoading) && <CircularProgress/>}
+                {(voteState.isLoading) && <CircularProgress/>}
 
-                <CardHeader title="Prediction" subheader={getSubHeaderText()}/>
+                <CardHeader title="Prediction" subheader={getSubHeaderText()}>
+                    <Typography variant="body2" component="p">
+                        {getSubHeaderText()}
+                    </Typography>
+                    <Typography variant="body2" component="p">
+                        fsdajfajsdl;fsda
+                    </Typography>
+                </CardHeader>
                 <CardActionArea>
+
+                    {voteState.reason && voteState.status === ERROR_STATUS &&
+                    <Typography variant="body2" color="error" component="p">
+                        {voteState.reason}
+                    </Typography>
+                    }
+
                     <CardContent>
                         <Typography variant="body2" color="textSecondary" component="p">
                             {prediction.statement}
@@ -163,13 +184,15 @@ export default function PredictionCard(props: PredictionCardProps) {
                 </CardActionArea>
                 <CardActions>
                     <Tooltip title="Vote yes">
-                        <IconButton color="primary" disabled={!isAuthenticated(userState) || isExpired(prediction) || notEnoughPoints(userState.user)}
+                        <IconButton color="primary"
+                                    disabled={!isAuthenticated(userState) || isExpired(prediction) || notEnoughPoints(userState.user)}
                                     onClick={() => handleClickOpenVoteDialog(true)}>
                             <ThumbUpIcon/>
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="Vote no">
-                        <IconButton color="secondary" disabled={!isAuthenticated(userState) || isExpired(prediction) || notEnoughPoints(userState.user)}
+                        <IconButton color="secondary"
+                                    disabled={!isAuthenticated(userState) || isExpired(prediction) || notEnoughPoints(userState.user)}
                                     onClick={() => handleClickOpenVoteDialog(false)}>
                             <ThumbDownIcon/>
                         </IconButton>
@@ -180,6 +203,7 @@ export default function PredictionCard(props: PredictionCardProps) {
                         onClick={handleExpandClick}
                         aria-expanded={expanded}
                         aria-label="show vote details"
+                        disabled={!statisticsState.statistics || statisticsState.statistics.totalVotes == 0}
                     >
                         <ExpandMoreIcon/>
                     </IconButton>
@@ -188,7 +212,8 @@ export default function PredictionCard(props: PredictionCardProps) {
                 {userState.user && userState.user.role === ADMIN_ROLE &&
 
                 <CardActions>
-                    <OutcomeSelect handleChangeOutcome={handleChangeOutcome} outcomeValue={outcome} isDisabled={prediction.outcome} />
+                    <OutcomeSelect handleChangeOutcome={handleChangeOutcome} outcomeValue={outcome}
+                                   isDisabled={prediction.outcome}/>
                 </CardActions>
 
                 }
@@ -197,11 +222,7 @@ export default function PredictionCard(props: PredictionCardProps) {
                             maxNoAvailablePoints={userState.user && userState.user.points}
                             userVote={userVote}/>
 
-                {/*<CustomSnackbar snackbarMessage={voteState.reason} openBar={openSnackbar}*/}
-                {/*                onClose={() => setOpenSnackbar(false)}*/}
-                {/*                variant={(voteState.status === 'error') ? 'error' : 'success'}/>*/}
-
-                <Collapse in={expanded} timeout="auto" unmountOnExit>
+                <Collapse in={expanded} timeout="auto">
                     <CardContent>
                         <CustomPieChart chartData={chartData}/>
                     </CardContent>
